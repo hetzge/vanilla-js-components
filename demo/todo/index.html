@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="https://todomvc.com/examples/vanilla-es6/node_modules/todomvc-app-css/index.css" rel="stylesheet" >
+<link href="https://todomvc.com/examples/vanilla-es6/node_modules/todomvc-common/base.css" rel="stylesheet" >
+</head>
+<body>
+	<script type="module">
+	  import * as index from "./index.js"; 
+      console.log(index);
+	  document.body.append(index.createTodoAppController().todoApp.$element);
+	</script>
+</body>
+</html>
