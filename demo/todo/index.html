@@ -7,9 +7,8 @@
 </head>
 <body>
 	<script type="module">
-	  import * as index from "./index.js"; 
-      console.log(index);
-	  document.body.append(index.createTodoAppController().todoApp.$element);
+	  import * as index from "./index.mjs"; 
+	  document.body.append(new index.TodoAppController().todoApp.$element);
 	</script>
 </body>
 </html>
