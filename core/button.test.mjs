@@ -1,7 +1,7 @@
 // @ts-check
 
 // @ts-ignore
-const QUnit = window.QUnit !== undefined ? window.QUnit : undefined;
+const QUnit = window.QUnit;
 
 import { Button } from "./button.mjs";
 

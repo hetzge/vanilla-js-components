@@ -412,4 +412,15 @@ export class TodoAppController {
   }
 }
 
+export function createTodoAppController() {
+  const controller = new TodoAppController();
+  controller.setFilters([
+    { title: "All", key: undefined },
+    { title: "Active", key: "active" },
+    { title: "Completed", key: "completed" },
+  ]);
+  return controller;
+}
+
+
 

@@ -1,6 +1,6 @@
 // @ts-check
 
-import BaseContainer from "./base-container.mjs";
+import { BaseContainer } from "./base-container.mjs";
 
 export class Button extends BaseContainer {
   static CLICK_EVENT_KEY = "Button#click";

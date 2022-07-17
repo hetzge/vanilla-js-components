@@ -1,40 +1,33 @@
 // @ts-check
 
-import BaseContainer from "./base-container.mjs";
+import { BaseComponent } from "./base-component.mjs";
 
+/**
+ * @typedef {Object} DropdownOption
+ * @property {string} value
+ * @property {string} text
+ */
+ {}
 
-export class Option extends BaseContainer {
-  constructor() {
-    super("option");
-    /** 
-     * @public
-     * @type {HTMLOptionElement}
-     */
-	 this.$element = this.$element;
-  }
-  /** @type {string} */
-  set value(value) {
-    this.$element.value = value;
-  }
-  get value() {
-	return this.$element.value;
-  }
-}
-
-export class Dropdown extends BaseContainer {
+export class Dropdown extends BaseComponent {
   static SELECT_EVENT_KEY = "Dropdown#select";
   constructor() {
-    super("select");
+	super();
     this.$element = document.createElement("select");
-    this.$element.addEventListener("change", () => this.dispatchEvent(Dropdown.SELECT_EVENT_KEY));
+    this.onChange = () => this.dispatchEvent(Dropdown.SELECT_EVENT_KEY); 
   }
   /**
-   * @param {Array<Option>} options
+   * @param {Array<DropdownOption>} options
    */
   set options(options) {
-    this.content = options
+    this.$element.innerHTML = "";
+    for (let option of options) {
+      const optionElement = document.createElement("option");
+      optionElement.setAttribute("value", option.value);
+      optionElement.innerText = option.text;
+      this.$element.append(optionElement);
+    }
   }
-  /** @type {string} */
   set value(value) {
     this.$element.value = value;
   }

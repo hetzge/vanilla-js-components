@@ -1,7 +1,7 @@
 // @ts-check
 
 // @ts-ignore
-const QUnit = window.QUnit !== undefined ? window.QUnit : undefined;
+const QUnit = window.QUnit;
 
 import { IntegerInput, TextInput, Checkbox } from "./input.mjs";
 

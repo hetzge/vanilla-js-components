@@ -3,7 +3,7 @@
 /**
  * The base class for all components.
  */
-export default class BaseComponent {
+export class BaseComponent {
   constructor() {
     /** 
      * @public

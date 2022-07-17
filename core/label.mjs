@@ -1,7 +1,7 @@
 // @ts-check
 
-import BaseComponent from "./base-component.mjs";
-import BaseContainer from "./base-container.mjs";
+import { BaseComponent } from "./base-component.mjs";
+import { BaseContainer } from "./base-container.mjs";
 
 export class Label extends BaseContainer {
   constructor() {

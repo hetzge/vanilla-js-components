@@ -1,6 +1,6 @@
 // @ts-check
 
-import BaseContainer from "./base-container.mjs";
+import { BaseContainer } from "./base-container.mjs";
 
 export class Division extends BaseContainer {
   constructor() {

@@ -1,9 +1,9 @@
 // @ts-check
 
 // @ts-ignore
-const QUnit = window.QUnit !== undefined ? window.QUnit : undefined;
+const QUnit = window.QUnit;
 
-import BaseContainer from "./base-container.mjs";
+import { BaseContainer } from "./base-container.mjs";
 
 QUnit.module("BaseContainer", hooks => {
   QUnit.test("content string", assert => {

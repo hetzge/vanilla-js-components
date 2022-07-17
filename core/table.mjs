@@ -1,6 +1,6 @@
 // @ts-check
 
-import BaseContainer from "./base-container.mjs";
+import { BaseContainer } from "./base-container.mjs";
 
 export class TableDataCell extends BaseContainer {
   constructor() {
@@ -48,7 +48,19 @@ export class TableBody extends BaseContainer {
 /**
  * Represents a table that can be filled with columns and rows.
  */
-export default class Table extends BaseContainer {
+export class Table extends BaseContainer {
+  /**
+   * @param {Object} defaults
+   * @param {Array<Column>} [defaults.columns=[]]
+   * @param {Array<Object>} [defaults.rows=[]] 
+   * @returns {Table} 
+   */
+  static create({ columns = [], rows = [] } = {}) {
+    const table = new Table();
+    table.columns = columns;
+    table.rows = rows;
+    return table;
+  }
   constructor() {
     super("table");
     this.content = [

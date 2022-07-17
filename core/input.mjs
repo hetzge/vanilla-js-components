@@ -1,6 +1,6 @@
 // @ts-check
 
-import BaseComponent from "./base-component.mjs";
+import { BaseComponent } from "./base-component.mjs";
 
 class BaseInput extends BaseComponent {
   constructor() {
