@@ -28,6 +28,7 @@ export class Dropdown extends BaseComponent {
       this.$element.append(optionElement);
     }
   }
+  /** @type {string} */
   set value(value) {
     this.$element.value = value;
   }
