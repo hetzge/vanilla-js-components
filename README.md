@@ -13,6 +13,6 @@ Then browse `http://localhost:8080/demo/todo`
 ## Run tests
 
 ```
-npm install qunit karma karma-qunit -g
+npm install qunit karma karma-qunit karma-firefox-launcher -g
 karma start
 ```

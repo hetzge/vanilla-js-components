@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-	  { pattern: './**/*.mjs', included: false },
+      { pattern: './**/*.mjs', included: false },
       { pattern: './tests.js', type: 'module' },
     ],
 
@@ -56,8 +56,13 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    browsers: ['Firefox'],
-
+    browsers: ['FirefoxLocalProfile'],
+    customLaunchers: {
+      'FirefoxLocalProfile': {
+        base: 'Firefox',
+        profile: require('path').join(__dirname, 'tmp'),
+      }
+    },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
