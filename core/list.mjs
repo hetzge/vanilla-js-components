@@ -8,6 +8,24 @@ import { BaseContainer } from "./base-container.mjs";
  */
 { }
 
+
+/**
+ * @param {Array<{term:import("./base-container.mjs").Content,description:import("./base-container.mjs").Content}>} pairs
+ * @returns {DescriptionListContent}
+ */
+export function toDescriptionListContent(pairs) {
+  const result = [];
+  for (let pair of pairs) {
+    const termItem = new DescriptionListTermItem();
+    termItem.content = pair.term;
+    result.push(termItem);
+    const descriptionItem = new DescriptionListDescriptionItem();
+    descriptionItem.content = pair.description;
+    result.push(descriptionItem);
+  }
+  return result;
+}
+
 export class DescriptionListTermItem extends BaseContainer {
   constructor() {
     super("dt");
