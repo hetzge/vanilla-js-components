@@ -4,12 +4,12 @@ import { BaseComponent } from "./base-component.mjs";
 import { BaseContainer } from "./base-container.mjs";
 
 class BaseInput extends BaseComponent {
-  constructor() {
+  constructor(tag) {
     super();
     /**
      * @type {HTMLInputElement}
      */
-    this.$element = document.createElement("input");
+    this.$element = document.createElement(tag);
     this.$element.addEventListener("keyup", event => {
       if (event.keyCode === 13) {
         this._onEnter();
@@ -45,7 +45,7 @@ class BaseInput extends BaseComponent {
 
 class BaseTextInput extends BaseInput {
   constructor() {
-    super();
+    super("input");
   }
   /**
    * @type {string}
@@ -92,7 +92,7 @@ export class IntegerInput extends BaseTextInput {
 
 export class Checkbox extends BaseInput {
   constructor() {
-    super();
+    super("input");
     this.$element.type = "checkbox";
   }
   /**
@@ -108,7 +108,7 @@ export class Checkbox extends BaseInput {
 
 export class DateInput extends BaseInput {
   constructor() {
-    super();
+    super("input");
     this.$element.type = "date";
   }
   /**
@@ -124,7 +124,7 @@ export class DateInput extends BaseInput {
 
 export class TimeInput extends BaseInput {
   constructor() {
-    super();
+    super("input");
     this.$element.type = "time";
   }
   /**
@@ -142,8 +142,8 @@ export class DateTimeInputGroup extends BaseContainer {
   constructor() {
     super("span");
     this.content = [
-		this._date = new DateInput(),
-		this._time = new TimeInput()
+      this._date = new DateInput(),
+      this._time = new TimeInput()
     ];
   }
   /**
@@ -154,7 +154,36 @@ export class DateTimeInputGroup extends BaseContainer {
     this._time.value = value;
   }
   get value() {
-	const day = 1000 * 60 * 60 * 24;
+    const day = 1000 * 60 * 60 * 24;
     return new Date((this._date.value.getDate() - (this._date.value.getDate() % day)) + this._time.value.getDate() % day);
+  }
+}
+
+export class TextArea extends BaseInput {
+  constructor() {
+    super("textarea");
+  }
+  /**
+   * @type {string}
+   */
+  set value(value) {
+    this.$element.value = value !== undefined ? value : "";
+  }
+  get value() {
+    return this.$element.value;
+  }
+  /** @type {number} */
+  set columns(columns) {
+    this.$element.setAttribute("cols", columns !== undefined ? String(columns) : "0");
+  }
+  get columns() {
+    return parseInt(this.$element.getAttribute("cols"));
+  }
+  /** @type {number} */
+  set rows(rows) {
+    this.$element.setAttribute("rows", rows !== undefined ? String(rows) : "0");
+  }
+  get rows() {
+    return parseInt(this.$element.getAttribute("rows"));
   }
 }
