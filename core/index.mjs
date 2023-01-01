@@ -5,6 +5,7 @@ export * from "./base-container.mjs";
 export * from "./input.mjs";
 export * from "./table.mjs";
 export * from "./list.mjs";
+export * from "./modal.mjs";
 export * from "./button.mjs";
 export * from "./label.mjs";
 export * from "./anchor.mjs";
