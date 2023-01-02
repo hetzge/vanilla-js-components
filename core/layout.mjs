@@ -10,9 +10,9 @@ export class CenterLayout extends BaseComponent {
     super();
     this.$element = document.createElement("div");
     this.$element.append((this._container = new BaseContainer("span")).$element);
-    Object.apply(this.$element.style, {
-      "width": "100% !important",
-      "height": "100% !important",
+    this.applyStyle({
+      "width": "100%",
+      "height": "100%",
       "display": "grid",
       "place-items": "center"
     });
@@ -35,11 +35,11 @@ export class HeaderLayout extends BaseComponent {
       (this._right = new BaseContainer("span"))
     ];
     this.applyStyle({
-      "width": "100% !important",
-      "height": "100% !important",
+      "width": "100%",
+      "height": "100%",
       "display": "flex",
       "justify-content": "space-between",
-      "align-items": "center"      
+      "align-items": "center"
     });
   }
   /**
@@ -72,8 +72,8 @@ export class PancakeStackLayout extends BaseComponent {
       (this._foot = new BaseContainer("footer"))
     ];
     this.applyStyle({
-      "width": "100% !important",
-      "height": "100% !important",
+      "width": "100%",
+      "height": "100%",
       "display": "grid",
       "grid-template-rows": "auto 1fr auto"
     });
@@ -105,12 +105,18 @@ export class SidebarLayout extends BaseComponent {
     super();
     this.$element = (this._container = new BaseContainer("div")).$element;
     this.applyStyle({
-      "width": "100% !important",
-      "height": "100% !important",
+      "width": "100%",
+      "height": "100%",
       "display": "grid"
     });
     this._side = new BaseContainer("div");
+    this._side.applyStyle({
+      "height": "100%"
+    });
     this._main = new BaseContainer("div");
+    this._main.applyStyle({
+      "height": "100%"
+    });
     this._orientation = SidebarLayout.LEFT_ORIENTATION;
     this._min = "150px";
     this._max = "25%";
