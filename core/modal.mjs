@@ -4,27 +4,47 @@ import { BaseComponent } from "./base-component.mjs";
 import { BaseContainer } from "./base-container.mjs";
 import * as layout from "./layout.mjs";
 
+/** 
+ * Create a container at the bottom of the page. 
+ * Opened dialogs will be moved into this container to fix order issues (dialog always in the front) and to prevent issues with nested dialog events. 
+ */
+function setupContainer() {
+  if (document.getElementById("__modals") === null) {
+    const $container = document.createElement("span");
+    $container.id = "__modals";
+    document.body.append($container);
+  }
+  return document.getElementById("__modals");
+}
+
 export class Modal extends BaseComponent {
   constructor() {
     super();
-    /** @type {HTMLDialogElement} */
-    this.$element = document.createElement("dialog");
+    this.$element = document.createElement("span");
+    this._$dialog = document.createElement("dialog");
     this._stackLayout = new layout.PancakeStackLayout();
-    this.$element.append(this._stackLayout.$element);
+    this._$dialog.append(this._stackLayout.$element);
   }
   open() {
-    // @ts-ignore
-    this.$element.showModal();
+    if (!this._$dialog.hasAttribute("open")) {
+      const $container = setupContainer();
+      $container.append(this._$dialog);
+      // @ts-ignore
+      this._$dialog.showModal();
+    }
   }
   close() {
-    // @ts-ignore
-    this.$element.close(undefined);
+    if (this._$dialog.hasAttribute("open")) {
+      this._$dialog.remove();
+      // @ts-ignore
+      this._$dialog.close(undefined);
+    }
   }
   /**
    * @type {BaseContainer} 
    */
   get head() {
-	return this._stackLayout.head;
+    return this._stackLayout.head;
   }
   /**
    * @type {BaseContainer} 
