@@ -14,3 +14,10 @@ export class Anchor extends BaseContainer {
     return this.$element.getAttribute("href");
   }
 }
+
+export function createAnchor(content, href) {
+  const anchor = new Anchor();
+  anchor.content = content;
+  anchor.href = href;
+  return anchor;
+}

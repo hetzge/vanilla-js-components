@@ -44,6 +44,15 @@ export class ListItem extends BaseContainer {
   }
 }
 
+/**
+ * @param {import("./base-container.mjs").Content} content
+ */
+export function createListItem(content) {
+	const item = new ListItem();
+	item.content = content;
+	return item;
+}
+
 export class DescriptionList extends BaseContainer {
   constructor() {
     super("dl");
