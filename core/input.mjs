@@ -67,7 +67,11 @@ export class TextInput extends BaseTextInput {
    * @type {string}
    */
   set value(value) {
-    this.$element.value = value !== undefined ? value : "";
+    if (value === undefined || value === null) {
+      this.$element.value = "";
+    } else {
+      this.$element.value = value;
+    }
   }
   get value() {
     return this.$element.value;
@@ -83,10 +87,42 @@ export class IntegerInput extends BaseTextInput {
    * @type {number}
    */
   set value(value) {
-    this.$element.value = value !== undefined ? "" + value : "0";
+    if (value === undefined || value === null) {
+      this.$element.value = "";
+    } else {
+      this.$element.value = "" + value;
+    }
   }
   get value() {
-    return parseInt(this.$element.value);
+    if (this.$element.value.trim() === "") {
+      return null;
+    } else {
+      return parseInt(this.$element.value);
+    }
+  }
+}
+
+export class NumberInput extends BaseTextInput {
+  constructor() {
+    super();
+    this.$element.type = "number";
+  }
+  /**
+   * @type {number}
+   */
+  set value(value) {
+    if (value === undefined || value === null) {
+      this.$element.value = "";
+    } else {
+      this.$element.value = "" + value;
+    }
+  }
+  get value() {
+    if (this.$element.value.trim() === "") {
+      return null;
+    } else {
+      return parseFloat(this.$element.value);
+    }
   }
 }
 
@@ -167,7 +203,11 @@ export class TextArea extends BaseInput {
    * @type {string}
    */
   set value(value) {
-    this.$element.value = value !== undefined ? value : "";
+    if (value === undefined || value === null) {
+      this.$element.value = "";
+    } else {
+      this.$element.value = value;
+    }
   }
   get value() {
     return this.$element.value;
