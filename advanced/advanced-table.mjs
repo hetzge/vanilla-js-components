@@ -153,6 +153,7 @@ export class AdvancedTable extends core.BaseContainer {
       this._headerPagination.pageSize = payload.component.pageSize;
       this._footerPagination.pageSize = payload.component.pageSize;
       this._request.limit = payload.component.pageSize;
+      this._request.offset = (this._headerPagination.page - 1) * this._request.limit;
       this.load();
     });
 
