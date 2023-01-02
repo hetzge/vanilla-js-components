@@ -9,3 +9,8 @@ import { BaseComponent } from "./base-component.mjs";
 export function style(component, css) {
   Object.assign(component.$element.style, css);
 }
+
+let id = 100000000;
+export function generateId() {
+	return (id++).toString(36);
+}
