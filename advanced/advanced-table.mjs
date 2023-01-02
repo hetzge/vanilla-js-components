@@ -148,19 +148,12 @@ export class AdvancedTable extends core.BaseContainer {
     };
 
     this.onEvent(PageDropdown.PAGE_SELECT_EVENT_KEY, (/** @type {{component:PageDropdown}} */ payload) => {
-      this._headerPageDropdown.pageSize = payload.component.pageSize;
-      this._footerPageDropdown.pageSize = payload.component.pageSize;
-      this._headerPagination.pageSize = payload.component.pageSize;
-      this._footerPagination.pageSize = payload.component.pageSize;
-      this._request.limit = payload.component.pageSize;
-      this._request.offset = (this._headerPagination.page - 1) * this._request.limit;
+      this.pageSize = payload.component.pageSize;
       this.load();
     });
 
     this.onEvent(Pagination.SELECT_EVENT_KEY, (/** @type {{component:Pagination}} */ payload) => {
-      this._headerPagination.page = payload.component.page;
-      this._footerPagination.page = payload.component.page;
-      this._request.offset = (payload.component.page - 1) * this._request.limit;
+      this.page = payload.component.page;
       this.load();
     });
 
@@ -171,6 +164,21 @@ export class AdvancedTable extends core.BaseContainer {
   }
   load() {
     this.dispatchEvent(AdvancedTable.LOAD_EVENT_KEY);
+  }
+  /** @param {Number} pageSize */
+  set pageSize(pageSize) {
+    this._headerPageDropdown.pageSize = pageSize;
+    this._footerPageDropdown.pageSize = pageSize;
+    this._headerPagination.pageSize = pageSize;
+    this._footerPagination.pageSize = pageSize;
+    this._request.limit = pageSize;
+    this._request.offset = (this._headerPagination.page - 1) * this._request.limit;
+  }
+  /** @param {Number} page */
+  set page(page) {
+    this._headerPagination.page = page;
+    this._footerPagination.page = page;
+    this._request.offset = (page - 1) * this._request.limit;
   }
   /** @param {Array<AdvancedTableColumn>} columns */
   set columns(columns) {
