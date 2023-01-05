@@ -2,6 +2,7 @@
 
 import { BaseComponent } from "./base-component.mjs";
 import { BaseContainer } from "./base-container.mjs";
+import { generateId } from "./utils.mjs";
 
 export class Label extends BaseContainer {
   constructor() {
@@ -14,7 +15,9 @@ export class Label extends BaseContainer {
     if (typeof idOrComponent === "string") {
       this.$element.setAttribute("for", idOrComponent);
     } else if (idOrComponent.$element !== undefined) {
-      this.$element.setAttribute("for", idOrComponent.id);
+      const id = idOrComponent.id === "" ? generateId() : idOrComponent.id;
+      idOrComponent.id = id;
+      this.$element.setAttribute("for", id);
     } else {
       throw new Error("Illegal argument '" + idOrComponent + "'");
     }
