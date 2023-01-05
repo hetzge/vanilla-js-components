@@ -232,3 +232,30 @@ export class TextArea extends BaseInput {
     return parseInt(this.$element.getAttribute("rows"));
   }
 }
+
+export class FileSelector extends BaseInput {
+  constructor() {
+    super("input");
+    this.$element.type = "file";
+  }
+  /** @type {string} */
+  set accept(accept) {
+    this.$element.accept = accept;
+  }
+  get accept() {
+    return this.$element.accept;
+  }
+  /** @type {boolean} */
+  set multiple(multiple) {
+    this.$element.multiple = multiple;
+  }
+  get multiple() {
+    return this.$element.multiple;
+  }
+  get file() {
+    return this.files[0];
+  }
+  get files() {
+    return this.$element.files;
+  }
+}
