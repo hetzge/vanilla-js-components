@@ -7,6 +7,7 @@ export * from "./table.mjs";
 export * from "./list.mjs";
 export * from "./modal.mjs";
 export * from "./button.mjs";
+export * from "./datalist.mjs";
 export * from "./label.mjs";
 export * from "./anchor.mjs";
 export * from "./simple.mjs";
