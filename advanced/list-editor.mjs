@@ -4,8 +4,8 @@ import * as core from "../core/index.mjs";
 
 /**
  * @typedef {Object} ListController
- * @property {function():any|undefined} onCreate
- * @property {function(any):boolean} onRemove
+ * @property {function():Promise<any|undefined>} onCreate
+ * @property {function(any):Promise<boolean>} onRemove
  */
 { }
 
@@ -27,8 +27,8 @@ export class ListEditor extends core.Division {
         cellFactory: data => {
           const button = new core.Button();
           button.content = "X";
-          button.onClick = () => {
-            if (this._controller.onRemove(data)) {
+          button.onClick = async () => {
+            if (await this._controller.onRemove(data)) {
               this.items = this._items.filter(item => item !== data);
             }
           };
@@ -40,12 +40,12 @@ export class ListEditor extends core.Division {
     this._items = [];
     /** @type {ListController} */
     this._controller = {
-      onCreate: () => undefined,
-      onRemove: (data) => false
+      onCreate: async () => undefined,
+      onRemove: async (data) => false
     };
   }
-  create() {
-    const created = this._controller.onCreate();
+  async create() {
+    const created = await this._controller.onCreate();
     if (created !== undefined) {
       this.items = [...this._items, created];
     }
@@ -62,5 +62,46 @@ export class ListEditor extends core.Division {
   /** @type {Array<import("../core/base-container.mjs").Content>} */
   get items() {
     return this._items;
+  }
+}
+
+export class TagListEditor extends core.Division {
+  constructor() {
+    super();
+    this.content = this._editor = new ListEditor();
+    this._editor.controller = this;
+    this._datalist = undefined;
+  }
+  _createInput(value) {
+    const input = new core.TextInput();
+    if (this._datalist !== undefined) {
+      input.list = this._datalist;
+    }
+    input.value = value;
+    return input;
+  }
+  async onCreate() {
+    return this._createInput("");
+  }
+  async onRemove(tag) {
+    return window.confirm("Sure ?");
+  }
+  /** @param {Array<string>} tags */
+  set tags(tags) {
+    this._editor.items = (tags || []).map(tag => {
+      return this._createInput(tag);
+    });
+  }
+  /** @type {Array<string>} */
+  get tags() {
+    return this._editor.items.map(item => {
+      // @ts-ignore
+      return item.value;
+    });
+  }
+  /** @param {core.Datalist} datalist */
+  set list(datalist) {
+    this._datalist = datalist;
+    this.tags = this.tags; // refresh editor
   }
 }
