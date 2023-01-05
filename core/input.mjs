@@ -2,6 +2,7 @@
 
 import { BaseComponent } from "./base-component.mjs";
 import { BaseContainer } from "./base-container.mjs";
+import { Datalist } from "./datalist.mjs";
 
 class BaseInput extends BaseComponent {
   constructor(tag) {
@@ -75,6 +76,10 @@ export class TextInput extends BaseTextInput {
   }
   get value() {
     return this.$element.value;
+  }
+  /** @param {Datalist} datalist */
+  set list(datalist) {
+    this.$element.setAttribute("list", datalist.id);
   }
 }
 
