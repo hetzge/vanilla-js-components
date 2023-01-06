@@ -6,6 +6,7 @@ export class Image extends BaseComponent {
   constructor() {
     super();
     this.$element = document.createElement("img");
+    this.$element.onerror = () => this.$element.style.display = "none";
   }
   set source(source) {
     this.$element.src = source;
