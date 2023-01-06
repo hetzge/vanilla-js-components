@@ -238,6 +238,9 @@ export class FileSelector extends BaseInput {
     super("input");
     this.$element.type = "file";
   }
+  reset() {
+	this.$element.value = null;
+  }
   /** @type {string} */
   set accept(accept) {
     this.$element.accept = accept;
