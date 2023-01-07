@@ -9,4 +9,12 @@ class Body extends BaseContainer {
   }
 }
 
+class Head extends BaseContainer {
+  constructor() {
+    super("head");
+    this.$element = window.document.head;
+  }
+}
+
 export const body = new Body();
+export const head = new Head();
