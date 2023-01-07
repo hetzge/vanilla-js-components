@@ -125,7 +125,7 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
     const header = new core.HeaderLayout();
     header.left.content = this._headerPagination;
-    header.left.$element.style.width = "350px";
+    header.left.$element.style.width = "400px";
     header.center.content = this._searchInput;
     header.right.content = this._headerPageDropdown;
     // ---------------------------------------------------
@@ -137,7 +137,7 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
     const footer = new core.HeaderLayout();
     footer.left.content = this._footerPagination;
-    footer.left.$element.style.width = "350px";
+    footer.left.$element.style.width = "400px";
     footer.center.content = "";
     footer.right.content = this._footerPageDropdown;
     // ---------------------------------------------------
@@ -206,15 +206,10 @@ export class PaginationLayout extends core.BaseContainer {
   }
 }
 
-export class AdvancedTable extends PaginationLayout {
-  static LOAD_EVENT_KEY = "AdvancedTable#load";
+export class SortableTable extends core.BaseComponent {
   constructor() {
     super();
-    this._table = new core.Table();
-    this.body.content = this._table;
-  }
-  load() {
-    this.dispatchEvent(AdvancedTable.LOAD_EVENT_KEY);
+    this.$element = (this._table = new core.Table()).$element;
   }
   /** @param {Array<AdvancedTableColumn>} columns */
   set columns(columns) {
@@ -229,6 +224,25 @@ export class AdvancedTable extends PaginationLayout {
         cellFactory: column.cellFactory
       };
     });
+  }
+  set rows(rows) {
+    this._table.rows = rows;
+  }
+}
+
+export class AdvancedTable extends PaginationLayout {
+  static LOAD_EVENT_KEY = PaginationLayout.LOAD_EVENT_KEY;
+  constructor() {
+    super();
+    this._table = new SortableTable();
+    this.body.content = this._table;
+  }
+  load() {
+    this.dispatchEvent(AdvancedTable.LOAD_EVENT_KEY);
+  }
+  /** @param {Array<AdvancedTableColumn>} columns */
+  set columns(columns) {
+    this._table.columns = columns;
   }
   /** @param {LoadTableResponse} data */
   set data(data) {
