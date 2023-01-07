@@ -1,5 +1,6 @@
 // @ts-check
 
+import { BaseComponent } from "./base-component.mjs";
 import { BaseContainer } from "./base-container.mjs";
 
 export class Division extends BaseContainer {
@@ -41,5 +42,12 @@ export class Footer extends BaseContainer {
 export class Header extends BaseContainer {
   constructor() {
     super("header");
+  }
+}
+
+export class LineBreak extends BaseComponent {
+  constructor() {
+    super();
+    this.$element = document.createElement("br");
   }
 }
