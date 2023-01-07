@@ -98,8 +98,8 @@ class TableHeaderToggle extends core.BaseComponent {
 { }
 
 
-export class AdvancedTable extends core.BaseContainer {
-  static LOAD_EVENT_KEY = "AdvancedTable#load";
+export class PaginationLayout extends core.BaseContainer {
+  static LOAD_EVENT_KEY = "PaginationLayout#load";
   constructor() {
     super("div");
 
@@ -114,26 +114,38 @@ export class AdvancedTable extends core.BaseContainer {
     // ---------------------------------------------------
 
     // ---------------------------------------------------
+    this._searchInput = new core.TextInput();
+    this._searchInput.placeholder = "Search";
+    this._searchInput.onEvent("keyup", () => {
+      this._request.query = this._searchInput.value !== "" ? this._searchInput.value : null;
+      this.load();
+    });
+    // ---------------------------------------------------
+
+    // ---------------------------------------------------
     const header = new core.HeaderLayout();
     header.left.content = this._headerPagination;
-    header.center.content = "";
+    header.left.$element.style.width = "350px";
+    header.center.content = this._searchInput;
     header.right.content = this._headerPageDropdown;
     // ---------------------------------------------------
 
     // ---------------------------------------------------
-    this._table = new core.Table();
+    this._body = new core.Division();
     // ---------------------------------------------------
 
     // ---------------------------------------------------
     const footer = new core.HeaderLayout();
     footer.left.content = this._footerPagination;
+    footer.left.$element.style.width = "350px";
+    footer.center.content = "";
     footer.right.content = this._footerPageDropdown;
     // ---------------------------------------------------
 
     // ---------------------------------------------------
     const layout = new core.PancakeStackLayout();
     layout.head.content = header;
-    layout.body.content = this._table;
+    layout.body.content = this._body;
     layout.foot.content = footer;
     // ---------------------------------------------------
 
@@ -144,7 +156,7 @@ export class AdvancedTable extends core.BaseContainer {
       sorts: {},
       offset: 0,
       limit: 10,
-      query: "+"
+      query: null
     };
 
     this.onEvent(PageDropdown.PAGE_SELECT_EVENT_KEY, (/** @type {{component:PageDropdown}} */ payload) => {
@@ -163,7 +175,7 @@ export class AdvancedTable extends core.BaseContainer {
     });
   }
   load() {
-    this.dispatchEvent(AdvancedTable.LOAD_EVENT_KEY);
+    this.dispatchEvent(PaginationLayout.LOAD_EVENT_KEY);
   }
   /** @param {Number} pageSize */
   set pageSize(pageSize) {
@@ -179,6 +191,30 @@ export class AdvancedTable extends core.BaseContainer {
     this._headerPagination.page = page;
     this._footerPagination.page = page;
     this._request.offset = (page - 1) * this._request.limit;
+  }
+  set total(total) {
+    this._headerPagination.total = total;
+    this._footerPagination.total = total;
+  }
+  /** @type {LoadTableRequest} */
+  get request() {
+    return this._request;
+  }
+  /** @type {core.Division} */
+  get body() {
+    return this._body;
+  }
+}
+
+export class AdvancedTable extends PaginationLayout {
+  static LOAD_EVENT_KEY = "AdvancedTable#load";
+  constructor() {
+    super();
+    this._table = new core.Table();
+    this.body.content = this._table;
+  }
+  load() {
+    this.dispatchEvent(AdvancedTable.LOAD_EVENT_KEY);
   }
   /** @param {Array<AdvancedTableColumn>} columns */
   set columns(columns) {
@@ -196,13 +232,8 @@ export class AdvancedTable extends core.BaseContainer {
   }
   /** @param {LoadTableResponse} data */
   set data(data) {
-    this._headerPagination.total = data.total;
-    this._footerPagination.total = data.total;
+    this.total = data.total;
     this._table.rows = data.rows;
-  }
-  /** @type {LoadTableRequest} */
-  get request() {
-    return this._request;
   }
 }
 
