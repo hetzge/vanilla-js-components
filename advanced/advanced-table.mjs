@@ -35,19 +35,20 @@ class TableHeaderToggle extends core.BaseComponent {
     super();
     this.$element = (this._toggle = new core.Toggle()).$element;
     this._content = new core.Span();
-    const noSortText = new core.Span();
-    noSortText.content = "";
-    const ascSortText = new core.Span();
-    ascSortText.content = "(ASC)";
-    const descSortText = new core.Span();
-    descSortText.content = "(DESC)";
+    this._noSortSpan = new core.Span();
+    this._noSortSpan.content = "";
+    this._ascSortSpan = new core.Span();
+    this._ascSortSpan.content = "(ASC)";
+    this._descSortSpan = new core.Span();
+    this._descSortSpan.content = "(DESC)";
     this._toggle.states = [
-      { value: null, content: [this._content, noSortText] },
-      { value: "asc", content: [this._content, ascSortText] },
-      { value: "desc", content: [this._content, descSortText] }
+      { value: null, content: [this._content, this._noSortSpan] },
+      { value: "asc", content: [this._content, this._ascSortSpan] },
+      { value: "desc", content: [this._content, this._descSortSpan] }
     ];
     this.onEvent(core.Toggle.TOGGLE_EVENT_KEY, () => this.dispatchEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT_KEY));
     this.$element.style.cursor = "pointer";
+    this.$element.style.display = "flex";
   }
   /** @type {string} */
   get key() {
@@ -64,12 +65,26 @@ class TableHeaderToggle extends core.BaseComponent {
   set content(content) {
     this._content.content = content;
   }
+  /** @param {core.Content} content */
+  set noSortContent(content) {
+    this._noSortSpan.content = content;
+  }
+  /** @param {core.Content} content */
+  set ascSortContent(content) {
+    this._ascSortSpan.content = content;
+  }
+  /** @param {core.Content} content */
+  set descSortContent(content) {
+    this._descSortSpan.content = content;
+  }
 }
 
 /**
  * @typedef {Object} AdvancedTableColumn
  * @property {string} key
+ * @property {string} [sortKey]
  * @property {function():core.Content} headerFactory
+ * @property {function():core.Content} [unitFactory]
  * @property {function(Object):core.Content} cellFactory
  */
 { }
@@ -131,10 +146,6 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
 
     // ---------------------------------------------------
-    this._body = new core.Division();
-    // ---------------------------------------------------
-
-    // ---------------------------------------------------
     const footer = new core.HeaderLayout();
     footer.left.content = this._footerPagination;
     footer.left.$element.style.width = "400px";
@@ -145,11 +156,10 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
     const layout = new core.PancakeStackLayout();
     layout.head.content = header;
-    layout.body.content = this._body;
     layout.foot.content = footer;
     // ---------------------------------------------------
 
-    this.content = layout;
+    this.content = this._layout = layout;
 
     /** @type {LoadTableRequest} */
     this._request = {
@@ -200,33 +210,79 @@ export class PaginationLayout extends core.BaseContainer {
   get request() {
     return this._request;
   }
-  /** @type {core.Division} */
+  /** @type {core.BaseContainer} */
   get body() {
-    return this._body;
+    return this._layout.body;
   }
 }
+
+const advancedTableCss = core.createCss(className => {
+  return `
+    .${className} {
+	  position: relative;
+	  width: 100%;
+	}
+	.${className} > thead > tr > th {
+	  position: sticky;
+	  top: 0;
+	  background-color: white;
+	  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+	}
+  `;
+});
 
 export class SortableTable extends core.BaseComponent {
   constructor() {
     super();
     this.$element = (this._table = new core.Table()).$element;
+    this._table.className = advancedTableCss();
+    /** @type {{no: function():import("../core/base-container.mjs").Content, asc: function():import("../core/base-container.mjs").Content, desc: function():import("../core/base-container.mjs").Content}} */
+    this._sortContentFactory = {
+      no: () => "",
+      asc: () => "(ASC)",
+      desc: () => "DESC"
+    };
+    this._columnListController = new core.ListController();
+    this._columnListController.factory = this._columnFactory.bind(this);
+    this._columnListController.callback = (columns) => this._table.columns = columns;
+  }
+  _columnFactory(column) {
+    return {
+      headFactory: () => {
+        const headerContainer = new core.PancakeStackLayout();
+        if (column.unitFactory !== undefined) {
+          headerContainer.foot.content = column.unitFactory();
+        } else {
+          headerContainer.foot.content = "-";
+        }
+        if (column.sortKey !== undefined) {
+          const headerToggle = new TableHeaderToggle();
+          if (this._sortContentFactory !== undefined) {
+            headerToggle.noSortContent = this._sortContentFactory.no();
+            headerToggle.ascSortContent = this._sortContentFactory.asc();
+            headerToggle.descSortContent = this._sortContentFactory.desc();
+          }
+          headerToggle.key = column.key;
+          headerToggle.content = column.headerFactory();
+          headerContainer.head.content = headerToggle;
+        } else {
+          headerContainer.head.content = column.headerFactory();
+        }
+        return headerContainer;
+      },
+      cellFactory: column.cellFactory
+    };
   }
   /** @param {Array<AdvancedTableColumn>} columns */
   set columns(columns) {
-    this._table.columns = columns.map(column => {
-      return {
-        headFactory: () => {
-          const headerToggle = new TableHeaderToggle();
-          headerToggle.key = column.key;
-          headerToggle.content = column.headerFactory();
-          return headerToggle;
-        },
-        cellFactory: column.cellFactory
-      };
-    });
+    this._columnListController.update(columns);
   }
   set rows(rows) {
     this._table.rows = rows;
+  }
+  set sortContentFactory(factory) {
+    this._sortContentFactory = factory;
+    this._columnListController.update();
   }
 }
 
