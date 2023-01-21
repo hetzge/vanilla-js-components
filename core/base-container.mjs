@@ -4,7 +4,7 @@ import { BaseComponent } from "./base-component.mjs";
 
 /**
  * @typedef {string|Node|BaseComponent|{$element:Node}} SimpleContent
- * @typedef {SimpleContent|Array<string>|Array<Node>|Array<BaseComponent>|Array<{$element:Node}>} Content
+ * @typedef {SimpleContent|Array<BaseComponent>|Array<{$element:Node}>|Array<SimpleContent>} Content
  */
 { }
 
