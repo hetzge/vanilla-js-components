@@ -77,6 +77,9 @@ export class PancakeStackLayout extends BaseComponent {
       "display": "grid",
       "grid-template-rows": "auto 1fr auto"
     });
+    this._body.applyStyle({
+      "overflow-y": "scroll"
+    });
   }
   /**
    * @type {BaseContainer} 
