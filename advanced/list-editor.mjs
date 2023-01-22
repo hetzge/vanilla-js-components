@@ -2,14 +2,9 @@
 
 import * as core from "../core/index.mjs";
 
-/**
- * @typedef {Object} ListController
- * @property {function():Promise<any|undefined>} onCreate
- * @property {function(any):Promise<boolean>} onRemove
- */
-{ }
-
 export class ListEditor extends core.Division {
+  static CREATE_EVENT_KEY = "ListEditor#create";
+  static REMOVE_EVENT_KEY = "ListEditor#remove";
   constructor() {
     super();
     this.content = [
@@ -17,7 +12,9 @@ export class ListEditor extends core.Division {
       this._createButton = new core.Button(),
     ];
     this._createButton.content = "+";
-    this._createButton.onClick = () => this.create();
+    this._createButton.onClick = () => {
+      this.dispatchEvent(ListEditor.CREATE_EVENT_KEY);
+    };
     this._table.columns = [
       {
         cellFactory: content => content,
@@ -28,9 +25,8 @@ export class ListEditor extends core.Division {
           const button = new core.Button();
           button.content = "X";
           button.onClick = async () => {
-            if (await this._controller.onRemove(data)) {
-              this.items = this._items.filter(item => item !== data);
-            }
+            this._selected = data;
+            this.dispatchEvent(ListEditor.REMOVE_EVENT_KEY);
           };
           return button;
         },
@@ -38,21 +34,6 @@ export class ListEditor extends core.Division {
       }
     ];
     this._items = [];
-    /** @type {ListController} */
-    this._controller = {
-      onCreate: async () => undefined,
-      onRemove: async (data) => false
-    };
-  }
-  async create() {
-    const created = await this._controller.onCreate();
-    if (created !== undefined) {
-      this.items = [...this._items, created];
-    }
-  }
-  /** @param {ListController} controller */
-  set controller(controller) {
-    this._controller = controller;
   }
   /** @param {Array<import("../core/base-container.mjs").Content>} items */
   set items(items) {
@@ -63,14 +44,30 @@ export class ListEditor extends core.Division {
   get items() {
     return this._items;
   }
+  addItem(item) {
+    this.items = [...this._items, item];
+  }
+  removeItem(itemToRemove = this.selected) {
+    this.items = this._items.filter(item => item !== itemToRemove);
+  }
+  get selected() {
+    return this._selected;
+  }
 }
 
 export class TagListEditor extends core.Division {
   constructor() {
     super();
     this.content = this._editor = new ListEditor();
-    this._editor.controller = this;
     this._datalist = undefined;
+    this._editor.onEvent(ListEditor.CREATE_EVENT_KEY, () => {
+      this._editor.addItem(this._createInput(""));
+    });
+    this._editor.onEvent(ListEditor.REMOVE_EVENT_KEY, () => {
+      if (window.confirm("Sure ?")) {
+        this._editor.removeItem();
+      }
+    });
   }
   _createInput(value) {
     const input = new core.TextInput();
@@ -79,12 +76,6 @@ export class TagListEditor extends core.Division {
     }
     input.value = value;
     return input;
-  }
-  async onCreate() {
-    return this._createInput("");
-  }
-  async onRemove(tag) {
-    return window.confirm("Sure ?");
   }
   /** @param {Array<string>} tags */
   set tags(tags) {
