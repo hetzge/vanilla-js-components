@@ -17,6 +17,8 @@ class PageDropdown extends core.BaseComponent {
       { value: "50", text: "50" },
       { value: "75", text: "75" },
       { value: "100", text: "100" },
+      { value: "200", text: "200" },
+      { value: "1000", text: "1000" },
     ];
     this.onEvent(core.Dropdown.SELECT_EVENT_KEY, () => this.dispatchEvent(PageDropdown.PAGE_SELECT_EVENT_KEY));
   }
