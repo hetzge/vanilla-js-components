@@ -43,10 +43,17 @@ export class Tabulators extends core.BaseComponent {
     });
   }
   async open(key) {
+    this.active = key;
+    this._body.content = await this._pages[key].page();
+  }
+  set active(key) {
+    this._active = key;
     Object.keys(this._items).forEach(key => {
       this._items[key].toggleClass("active", false);
     });
     this._items[key].toggleClass("active", true);
-    this._body.content = await this._pages[key].page();
+  }
+  get active() {
+    return this._active;
   }
 }
