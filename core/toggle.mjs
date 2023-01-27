@@ -1,6 +1,7 @@
 // @ts-check
 
 import { BaseContainer } from "./base-container.mjs";
+import { Event } from "./event.mjs";
 
 /**
  * @typedef {Object} ToggleState
@@ -10,7 +11,8 @@ import { BaseContainer } from "./base-container.mjs";
 { }
 
 export class Toggle extends BaseContainer {
-  static TOGGLE_EVENT_KEY = "Toggle#toggle";
+  /** @type {Event<Toggle, void>} */
+  static TOGGLE_EVENT = new Event();
   constructor() {
     super("span");
     this.$element = document.createElement("span");
@@ -18,7 +20,7 @@ export class Toggle extends BaseContainer {
     this._index = 0;
     this.onClick = () => {
       this.toggle();
-      this.dispatchEvent(Toggle.TOGGLE_EVENT_KEY);
+      this.dispatchEvent(Toggle.TOGGLE_EVENT);
     };
   }
   toggle() {

@@ -1,14 +1,13 @@
 // @ts-check
 
+import { Event } from "./event.mjs";
+
 /**
  * The base class for all components.
+ * @extends import("./event.mjs").EventTarget
  */
 export class BaseComponent {
   constructor() {
-    /** 
-     * @public
-     * @type {HTMLElement}
-     */
     this.$element = undefined;
   }
   /**
@@ -94,18 +93,32 @@ export class BaseComponent {
   }
   /**
    * Register event callback for the given key on this components element.
-   * @param {string} key The event key
-   * @param {function({component:BaseComponent}):any} callback The event callback
+   * @template {import("./event.mjs").EventTarget} C
+   * @template T
+   * @param {string|Event<C, T>} event The event key
+   * @param {function(C,T):any} callback The event callback
    */
-  onEvent(key, callback) {
-    this.$element.addEventListener(key, (/** @type {CustomEvent} */ event) => callback(event.detail));
+  onEvent(event, callback) {
+    if (typeof event === "string") {
+      this.$element.addEventListener(event, (/** @type {CustomEvent} */ event) => callback(event.detail.component, event.detail.payload));
+    } else {
+      event.register(this, callback);
+    }
   }
   /**
    * Dispatch a default event for the given event key starting from this components element.
-   * @param {string} key The event key
+   * @template {import("./event.mjs").EventTarget} C
+   * @template T
+   * @this C
+   * @param {string|Event<C, T>} event The event key
+   * @param {T} payload
    */
-  dispatchEvent(key) {
-    this.$element.dispatchEvent(new CustomEvent(key, { bubbles: true, detail: { component: this } }));
+  dispatchEvent(event, payload = undefined) {
+    if (typeof event === "string") {
+      this.$element.dispatchEvent(new CustomEvent(event, { bubbles: true, detail: { component: this, payload } }));
+    } else {
+      event.dispatch(this, payload);
+    }
   }
 }
 

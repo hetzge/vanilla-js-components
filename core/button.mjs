@@ -1,12 +1,14 @@
 // @ts-check
 
 import { BaseContainer } from "./base-container.mjs";
+import { Event } from "./event.mjs";
 
 export class Button extends BaseContainer {
-  static CLICK_EVENT_KEY = "Button#click";
+  /** @type {Event<Button, void>} */
+  static CLICK_EVENT = new Event();
   constructor() {
     super("button");
     /** @type {HTMLButtonElement} */ (this.$element).type = "button";
-    this.onClick = () => this.dispatchEvent(Button.CLICK_EVENT_KEY);
+    this.onClick = () => this.dispatchEvent(Button.CLICK_EVENT);
   }
 }

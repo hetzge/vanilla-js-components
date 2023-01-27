@@ -1,6 +1,7 @@
 // @ts-check
 
 import { BaseComponent } from "./base-component.mjs";
+import { Event } from "./event.mjs";
 
 /**
  * @typedef {object} DropdownOptionGroup
@@ -17,11 +18,12 @@ import { BaseComponent } from "./base-component.mjs";
 { }
 
 export class Dropdown extends BaseComponent {
-  static SELECT_EVENT_KEY = "Dropdown#select";
+  /** @type {Event<Dropdown, void>} */
+  static SELECT_EVENT = new Event();
   constructor() {
     super();
     this.$element = document.createElement("select");
-    this.onChange = () => this.dispatchEvent(Dropdown.SELECT_EVENT_KEY);
+    this.onChange = () => this.dispatchEvent(Dropdown.SELECT_EVENT);
   }
   /**
    * @param {Array<DropdownOption|DropdownOptionGroup>} options

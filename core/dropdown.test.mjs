@@ -14,7 +14,7 @@ QUnit.module("Dropdown", hooks => {
       { value: "BBB", text: "Bbb" },
     ];
     let selected = false;
-    dropdown.onEvent(Dropdown.SELECT_EVENT_KEY, () => selected = true);
+    dropdown.onEvent(Dropdown.SELECT_EVENT, () => selected = true);
     // When
     dropdown.value = "BBB";
     dropdown.$element.dispatchEvent(new Event('change'));

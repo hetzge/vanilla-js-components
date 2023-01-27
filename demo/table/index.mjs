@@ -21,8 +21,8 @@ class TableApp extends core.BaseContainer {
       ]
     }
     this.content = table;
-    this.onEvent(advanced.AdvancedTable.LOAD_EVENT_KEY, (/** @type {{component:advanced.AdvancedTable}} */ payload) => {
-      console.log(payload.component.request);
+    this.onEvent(advanced.AdvancedTable.LOAD_EVENT, (table) => {
+      console.log(table.request);
     });
   }
 }

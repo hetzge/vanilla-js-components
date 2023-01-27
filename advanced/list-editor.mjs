@@ -3,8 +3,10 @@
 import * as core from "../core/index.mjs";
 
 export class ListEditor extends core.Division {
-  static CREATE_EVENT_KEY = "ListEditor#create";
-  static REMOVE_EVENT_KEY = "ListEditor#remove";
+  /** @type {core.Event<ListEditor, void>} */
+  static CREATE_EVENT = new core.Event();
+  /** @type {core.Event<ListEditor, void>} */
+  static REMOVE_EVENT = new core.Event();
   constructor() {
     super();
     this.content = [
@@ -13,7 +15,7 @@ export class ListEditor extends core.Division {
     ];
     this._createButton.content = "+";
     this._createButton.onClick = () => {
-      this.dispatchEvent(ListEditor.CREATE_EVENT_KEY);
+      this.dispatchEvent(ListEditor.CREATE_EVENT);
     };
     this._table.columns = [
       {
@@ -26,7 +28,7 @@ export class ListEditor extends core.Division {
           button.content = "X";
           button.onClick = async () => {
             this._selected = data;
-            this.dispatchEvent(ListEditor.REMOVE_EVENT_KEY);
+            this.dispatchEvent(ListEditor.REMOVE_EVENT);
           };
           return button;
         },
@@ -60,10 +62,10 @@ export class TagListEditor extends core.Division {
     super();
     this.content = this._editor = new ListEditor();
     this._datalist = undefined;
-    this._editor.onEvent(ListEditor.CREATE_EVENT_KEY, () => {
+    this._editor.onEvent(ListEditor.CREATE_EVENT, () => {
       this._editor.addItem(this._createInput(""));
     });
-    this._editor.onEvent(ListEditor.REMOVE_EVENT_KEY, () => {
+    this._editor.onEvent(ListEditor.REMOVE_EVENT, () => {
       if (window.confirm("Sure ?")) {
         this._editor.removeItem();
       }

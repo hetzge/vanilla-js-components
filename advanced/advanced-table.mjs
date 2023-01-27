@@ -1,11 +1,11 @@
 // @ts-check
 
-
 import * as core from "../core/index.mjs";
 import { Pagination } from "./pagination.mjs";
 
 class PageDropdown extends core.BaseComponent {
-  static PAGE_SELECT_EVENT_KEY = "PageDropdown#page-select";
+  /** @type {core.Event<PageDropdown, void>} */
+  static PAGE_SELECT_EVENT = new core.Event();
   constructor() {
     super();
     this.$element = (this._dropdown = new core.Dropdown()).$element;
@@ -20,7 +20,7 @@ class PageDropdown extends core.BaseComponent {
       { value: "200", text: "200" },
       { value: "1000", text: "1000" },
     ];
-    this.onEvent(core.Dropdown.SELECT_EVENT_KEY, () => this.dispatchEvent(PageDropdown.PAGE_SELECT_EVENT_KEY));
+    this.onEvent(core.Dropdown.SELECT_EVENT, () => this.dispatchEvent(PageDropdown.PAGE_SELECT_EVENT));
   }
   /** @type {number} */
   get pageSize() {
@@ -32,7 +32,8 @@ class PageDropdown extends core.BaseComponent {
 }
 
 class TableHeaderToggle extends core.BaseComponent {
-  static TOGGLE_HEADER_EVENT_KEY = "TableHeaderToggle#toggle-header";
+  /** @type {core.Event<TableHeaderToggle, void>} */
+  static TOGGLE_HEADER_EVENT = new core.Event();
   constructor() {
     super();
     this.$element = (this._toggle = new core.Toggle()).$element;
@@ -48,7 +49,7 @@ class TableHeaderToggle extends core.BaseComponent {
       { value: "asc", content: [this._content, this._ascSortSpan] },
       { value: "desc", content: [this._content, this._descSortSpan] }
     ];
-    this.onEvent(core.Toggle.TOGGLE_EVENT_KEY, () => this.dispatchEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT_KEY));
+    this.onEvent(core.Toggle.TOGGLE_EVENT, () => this.dispatchEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT));
     this.$element.style.cursor = "pointer";
     this.$element.style.display = "flex";
   }
@@ -116,7 +117,8 @@ class TableHeaderToggle extends core.BaseComponent {
 
 
 export class PaginationLayout extends core.BaseContainer {
-  static LOAD_EVENT_KEY = "PaginationLayout#load";
+  /** @type {core.Event<PaginationLayout, void>} */
+  static LOAD_EVENT = new core.Event();
   constructor() {
     super("div");
 
@@ -171,23 +173,21 @@ export class PaginationLayout extends core.BaseContainer {
       query: null
     };
 
-    this.onEvent(PageDropdown.PAGE_SELECT_EVENT_KEY, (/** @type {{component:PageDropdown}} */ payload) => {
-      this.pageSize = payload.component.pageSize;
+    this.onEvent(PageDropdown.PAGE_SELECT_EVENT, (dropdown) => {
+      this.pageSize = dropdown.pageSize;
       this.load();
     });
-
-    this.onEvent(Pagination.SELECT_EVENT_KEY, (/** @type {{component:Pagination}} */ payload) => {
-      this.page = payload.component.page;
+    this.onEvent(Pagination.SELECT_EVENT, (pagination) => {
+      this.page = pagination.page;
       this.load();
     });
-
-    this.onEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT_KEY, (/** @type {{component:TableHeaderToggle}} */ payload) => {
-      this._request.sorts[payload.component.key] = payload.component.order;
+    this.onEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT, (toggle) => {
+      this._request.sorts[toggle.key] = toggle.order;
       this.load();
     });
   }
   load() {
-    this.dispatchEvent(PaginationLayout.LOAD_EVENT_KEY);
+    this.dispatchEvent(PaginationLayout.LOAD_EVENT);
   }
   /** @param {Number} pageSize */
   set pageSize(pageSize) {
@@ -289,14 +289,15 @@ export class SortableTable extends core.BaseComponent {
 }
 
 export class AdvancedTable extends PaginationLayout {
-  static LOAD_EVENT_KEY = PaginationLayout.LOAD_EVENT_KEY;
+  /** @type {core.Event<AdvancedTable, void>} */
+  static LOAD_EVENT = new core.Event();
   constructor() {
     super();
     this._table = new SortableTable();
     this.body.content = this._table;
   }
   load() {
-    this.dispatchEvent(AdvancedTable.LOAD_EVENT_KEY);
+    this.dispatchEvent(AdvancedTable.LOAD_EVENT);
   }
   /** @param {Array<AdvancedTableColumn>} columns */
   set columns(columns) {

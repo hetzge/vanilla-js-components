@@ -1,9 +1,8 @@
 // @ts-check
 
 import { BaseComponent } from "./base-component.mjs";
-import { head } from "./page.mjs";
 import { Division } from "./simple.mjs";
-import { createCss, generateId } from "./utils.mjs";
+import { createCss } from "./style.mjs";
 
 export class Image extends BaseComponent {
   constructor() {

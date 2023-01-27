@@ -11,35 +11,27 @@ class PaginationData {
     /** @property {number} _total */
     this._total = 0;
   }
-
   set pageSize(pageSize) {
     this._pageSize = pageSize;
   }
-
   get pageSize() {
     return this._pageSize;
   }
-
   set total(total) {
     this._total = total;
   }
-
   get total() {
     return this._total;
   }
-
   set page(page) {
     this._page = page;
   }
-
   get page() {
     return Math.max(1, Math.min(this._page, this.lastPage));
   }
-
   get lastPage() {
     return Math.ceil(this._total / this._pageSize);
   }
-
   get lowOptions() {
     const options = [];
     for (let option = Math.max(1, this.page - 5); option < this.page; option++) {
@@ -47,7 +39,6 @@ class PaginationData {
     }
     return options;
   }
-
   get highOptions() {
     const options = [];
     for (let option = this.page + 1; option <= Math.min(this.lastPage, this.page + 6); option++) {
@@ -57,7 +48,6 @@ class PaginationData {
   }
 }
 
-
 /**
  * @typedef {Object} PaginationSelectEventDetails
  * @property {number} page
@@ -65,9 +55,10 @@ class PaginationData {
 { }
 
 export class Pagination extends core.BaseContainer {
-  static SELECT_EVENT_KEY = "Pagination#select";
+  /** @type {core.Event<Pagination, void>} */
+  static SELECT_EVENT = new core.Event();
   constructor() {
-	super("span");
+    super("span");
     this._data = new PaginationData();
     this.update();
   }
@@ -115,6 +106,6 @@ export class Pagination extends core.BaseContainer {
   }
   _setPage(page) {
     this.page = page;
-    this.dispatchEvent(Pagination.SELECT_EVENT_KEY);
+    this.dispatchEvent(Pagination.SELECT_EVENT);
   }
 }

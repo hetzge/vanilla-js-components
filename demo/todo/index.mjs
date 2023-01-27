@@ -17,15 +17,18 @@ import * as core from "../../core/index.mjs";
 { }
 
 export class TodoListItem extends core.ListItem {
-  static REMOVE_ITEM_EVENT_KEY = "TodoListItem#REMOVE_ITEM";
-  static COMPLETE_ITEM_EVENT_KEY = "TodoListItem#COMPLETE_ITEM";
-  static EDIT_ITEM_EVENT_KEY = "TodoListItem#EDIT";
+  /** @type {core.Event<TodoListItem, void>} */
+  static REMOVE_ITEM_EVENT = new core.Event();
+  /** @type {core.Event<TodoListItem, void>} */
+  static COMPLETE_ITEM_EVENT = new core.Event();
+  /** @type {core.Event<TodoListItem, void>} */
+  static EDIT_ITEM_EVENT = new core.Event();
   constructor() {
     super();
     // ---------------------------------------------------
     this._checkbox = new core.Checkbox();
     this._checkbox.className = "toggle";
-    this._checkbox.onChange = () => this.dispatchEvent(TodoListItem.COMPLETE_ITEM_EVENT_KEY);
+    this._checkbox.onChange = () => this.dispatchEvent(TodoListItem.COMPLETE_ITEM_EVENT);
     // ---------------------------------------------------
 
     // ---------------------------------------------------
@@ -35,7 +38,7 @@ export class TodoListItem extends core.ListItem {
     // ---------------------------------------------------
     this._button = new core.Button();
     this._button.toggleClass("destroy");
-    this._button.onClick = () => this.dispatchEvent(TodoListItem.REMOVE_ITEM_EVENT_KEY);
+    this._button.onClick = () => this.dispatchEvent(TodoListItem.REMOVE_ITEM_EVENT);
     // ---------------------------------------------------
 
     // ---------------------------------------------------
@@ -61,7 +64,7 @@ export class TodoListItem extends core.ListItem {
     requestAnimationFrame(() => this._input.focus());
   }
   submit() {
-    this.dispatchEvent(TodoListItem.EDIT_ITEM_EVENT_KEY);
+    this.dispatchEvent(TodoListItem.EDIT_ITEM_EVENT);
     TodoListItem.cancelEditAll();
   }
   /**
@@ -87,13 +90,14 @@ export class TodoListItem extends core.ListItem {
 }
 
 export class FilterListItem extends core.ListItem {
-  static FILTER_EVENT_KEY = "FilterListItem#FILTER";
+  /** @type {core.Event<FilterListItem, void>} */
+  static FILTER_EVENT = new core.Event();
   constructor() {
     super();
 
     // ---------------------------------------------------
     this._anchor = new core.Anchor();
-    this._anchor.onClick = () => this.dispatchEvent(FilterListItem.FILTER_EVENT_KEY);
+    this._anchor.onClick = () => this.dispatchEvent(FilterListItem.FILTER_EVENT);
     // ---------------------------------------------------
 
     /** @type {Filter} */
@@ -119,9 +123,12 @@ export class FilterListItem extends core.ListItem {
 }
 
 export class TodoApp extends core.BaseComponent {
-  static SUBMIT_EVENT_KEY = "TodoApp#SUBMIT";
-  static CLEAR_COMPLETED_EVENT_KEY = "TodoApp#CLEAR_COMPLETED"
-  static COMPLETE_ALL_EVENT_KEY = "TodoApp#COMPLETE_ALL"
+  /** @type {core.Event<TodoApp, void>} */
+  static SUBMIT_EVENT = new core.Event();
+  /** @type {core.Event<TodoApp, void>} */
+  static CLEAR_COMPLETED_EVENT = new core.Event();
+  /** @type {core.Event<TodoApp, void>} */
+  static COMPLETE_ALL_EVENT = new core.Event();
   constructor() {
     super();
 
@@ -132,7 +139,7 @@ export class TodoApp extends core.BaseComponent {
       this._input.className = "qa-todo-input new-todo";
       this._input.placeholder = "What needs to be done ?";
       this._input.autofocus = true;
-      this._input.onEnter = () => this.dispatchEvent(TodoApp.SUBMIT_EVENT_KEY)
+      this._input.onEnter = () => this.dispatchEvent(TodoApp.SUBMIT_EVENT)
       // ---------------------------------------------------
 
       // ---------------------------------------------------
@@ -152,7 +159,7 @@ export class TodoApp extends core.BaseComponent {
       // ---------------------------------------------------
       this._checkbox = new core.Checkbox();
       this._checkbox.className = "toggle-all";
-      this._checkbox.onChange = () => this.dispatchEvent(TodoApp.COMPLETE_ALL_EVENT_KEY);
+      this._checkbox.onChange = () => this.dispatchEvent(TodoApp.COMPLETE_ALL_EVENT);
       // ---------------------------------------------------
 
       // ---------------------------------------------------
@@ -181,7 +188,7 @@ export class TodoApp extends core.BaseComponent {
         const button = new core.Button();
         button.className = "clear-completed qa-clear-completed-button";
         button.content = "Clear completed";
-        button.onClick = () => this.dispatchEvent(TodoApp.CLEAR_COMPLETED_EVENT_KEY);
+        button.onClick = () => this.dispatchEvent(TodoApp.CLEAR_COMPLETED_EVENT);
         // ---------------------------------------------------
 
         // ---------------------------------------------------
@@ -329,13 +336,13 @@ export class TodoAppController {
     this._model = new TodoAppModel();
     this._model.filter = this._filters[0];
     this.todoApp = new TodoApp();
-    this.todoApp.onEvent(TodoApp.SUBMIT_EVENT_KEY, payload => this.addTodo())
-    this.todoApp.onEvent(TodoApp.COMPLETE_ALL_EVENT_KEY, payload => this.completeAll())
-    this.todoApp.onEvent(TodoApp.CLEAR_COMPLETED_EVENT_KEY, payload => this.clearCompleted());
-    this.todoApp.onEvent(FilterListItem.FILTER_EVENT_KEY, payload => this.setFilter(/** @type {FilterListItem} */(payload.component).filter));
-    this.todoApp.onEvent(TodoListItem.REMOVE_ITEM_EVENT_KEY, (/** @type {{component:TodoListItem}} */ payload) => this.removeTodo(payload.component.todo));
-    this.todoApp.onEvent(TodoListItem.COMPLETE_ITEM_EVENT_KEY, (/** @type {{component:TodoListItem}} */ payload) => this.complete(payload.component.todo));
-    this.todoApp.onEvent(TodoListItem.EDIT_ITEM_EVENT_KEY, (/** @type {{component:TodoListItem}} */ payload) => this.edit(payload.component.value, payload.component.todo));
+    this.todoApp.onEvent(TodoApp.SUBMIT_EVENT, () => this.addTodo())
+    this.todoApp.onEvent(TodoApp.COMPLETE_ALL_EVENT, () => this.completeAll())
+    this.todoApp.onEvent(TodoApp.CLEAR_COMPLETED_EVENT, () => this.clearCompleted());
+    this.todoApp.onEvent(FilterListItem.FILTER_EVENT, (item) => this.setFilter(item.filter));
+    this.todoApp.onEvent(TodoListItem.REMOVE_ITEM_EVENT, (item) => this.removeTodo(item.todo));
+    this.todoApp.onEvent(TodoListItem.COMPLETE_ITEM_EVENT, (item) => this.complete(item.todo));
+    this.todoApp.onEvent(TodoListItem.EDIT_ITEM_EVENT, (item) => this.edit(item.value, item.todo));
     this.updateTodos();
     this.updateFilters();
   }
@@ -360,8 +367,8 @@ export class TodoAppController {
     this.updateTodos();
   }
   edit(value, todo) {
-	todo.title = value;
-	this.updateTodos(); 
+    todo.title = value;
+    this.updateTodos();
   }
   clearCompleted() {
     this._model.clearCompleted();

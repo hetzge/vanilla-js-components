@@ -10,7 +10,7 @@ QUnit.module("Button", hooks => {
     // Given
     const button = new Button();
     let clicked = false;
-    button.onEvent(Button.CLICK_EVENT_KEY, () => clicked = true);
+    button.onEvent(Button.CLICK_EVENT, () => clicked = true);
     // When
     button.$element.click();
     // Then
