@@ -2,6 +2,7 @@
 
 export * from "./base-component.mjs";
 export * from "./base-container.mjs";
+export * from "./form.mjs";
 export * from "./input.mjs";
 export * from "./table.mjs";
 export * from "./list.mjs";
