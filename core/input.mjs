@@ -42,6 +42,15 @@ class BaseInput extends BaseComponent {
   set onEnter(callback) {
     this._onEnter = callback;
   }
+  /**
+   * @type {boolean}
+   */
+  set required(required) {
+    this.$element.required = required ? true : undefined;
+  }
+  get required() {
+    return this.$element.required;
+  }
 }
 
 class BaseTextInput extends BaseInput {
@@ -85,8 +94,8 @@ export class TextInput extends BaseTextInput {
 
 export class PasswordInput extends TextInput {
   constructor() {
-	super();
-	this.$element.type = "password";
+    super();
+    this.$element.type = "password";
   }
 }
 
