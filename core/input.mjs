@@ -83,6 +83,13 @@ export class TextInput extends BaseTextInput {
   }
 }
 
+export class PasswordInput extends TextInput {
+  constructor() {
+	super();
+	this.$element.type = "password";
+  }
+}
+
 export class IntegerInput extends BaseTextInput {
   constructor() {
     super();
@@ -239,7 +246,7 @@ export class FileSelector extends BaseInput {
     this.$element.type = "file";
   }
   reset() {
-	this.$element.value = null;
+    this.$element.value = null;
   }
   /** @type {string} */
   set accept(accept) {
