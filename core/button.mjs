@@ -11,4 +11,13 @@ export class Button extends BaseContainer {
     /** @type {HTMLButtonElement} */ (this.$element).type = "button";
     this.onClick = () => this.dispatchEvent(Button.CLICK_EVENT);
   }
+  /**
+   * @type {boolean}
+   */
+  set disabled(disabled) {
+    /** @type {HTMLButtonElement} */ (this.$element).disabled = disabled;
+  }
+  get disabled() {
+    return /** @type {HTMLButtonElement} */ (this.$element).disabled;
+  }
 }
