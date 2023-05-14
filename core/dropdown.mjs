@@ -17,6 +17,10 @@ import { Event } from "./event.mjs";
  */
 { }
 
+function isOptionGroup(option) {
+  return typeof option === "object" && option["label"] !== undefined && option["options"] !== undefined;
+}
+
 export class Dropdown extends BaseComponent {
   /** @type {Event<Dropdown, void>} */
   static SELECT_EVENT = new Event();
@@ -24,28 +28,36 @@ export class Dropdown extends BaseComponent {
     super();
     this.$element = document.createElement("select");
     this.onChange = () => this.dispatchEvent(Dropdown.SELECT_EVENT);
+    this._optionsByValue = {};
   }
   /**
    * @param {Array<DropdownOption|DropdownOptionGroup>} options
    */
   set options(options) {
+    this._optionsByValue = {};
     this.$element.innerHTML = "";
     for (let option of options) {
-      if (option["label"] !== undefined) {
+      if (isOptionGroup(option)) {
         const $optionGroupElement = document.createElement("optgroup");
         $optionGroupElement.label = option["label"];
         for (let groupOption of option["options"]) {
+          const value = groupOption["value"];
+          const text = groupOption["text"];
           const $optionElement = document.createElement("option");
-          $optionElement.setAttribute("value", groupOption["value"]);
-          $optionElement.innerText = groupOption["text"];
+          $optionElement.setAttribute("value", value);
+          $optionElement.innerText = text;
           $optionGroupElement.append($optionElement);
+          this._optionsByValue[value] = groupOption;
         }
         this.$element.append($optionGroupElement);
       } else {
+        const value = option["value"];
+        const text = option["text"];
         const $optionElement = document.createElement("option");
-        $optionElement.setAttribute("value", option["value"]);
-        $optionElement.innerText = option["text"];
+        $optionElement.setAttribute("value", value);
+        $optionElement.innerText = text;
         this.$element.append($optionElement);
+        this._optionsByValue[value] = option;
       }
     }
   }
@@ -55,5 +67,8 @@ export class Dropdown extends BaseComponent {
   }
   get value() {
     return this.$element.value;
+  }
+  get option() {
+    return this._optionsByValue[this.value];
   }
 }
