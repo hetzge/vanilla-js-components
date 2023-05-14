@@ -47,7 +47,7 @@ export class Fieldset extends BaseComponent {
   }
   set content(content) {
     this._content = content;
-    this._container.content = [this._legend, this._error, this._content];
+    this._container.content = [this._legend, this._error, ...(Array.isArray(this._content) ? this._content : [this._content])];
   }
   set error(error) {
     const hasError = error != null;
