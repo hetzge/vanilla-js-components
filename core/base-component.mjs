@@ -96,11 +96,11 @@ export class BaseComponent {
    * @template {import("./event.mjs").EventTarget} C
    * @template T
    * @param {string|Event<C, T>} event The event key
-   * @param {function(C,T):any} callback The event callback
+   * @param {function({target: C, payload: T}):any} callback The event callback
    */
   onEvent(event, callback) {
     if (typeof event === "string") {
-      this.$element.addEventListener(event, (/** @type {CustomEvent} */ event) => callback(event.detail.component, event.detail.payload));
+      this.$element.addEventListener(event, (/** @type {CustomEvent} */ event) => callback({target: event.detail.component, payload: event.detail.payload}));
     } else {
       event.register(this, callback);
     }
@@ -113,7 +113,7 @@ export class BaseComponent {
    * @param {string|Event<C, T>} event The event key
    * @param {T} payload
    */
-  dispatchEvent(event, payload = undefined) {
+  dispatchEvent(event, payload) {
     if (typeof event === "string") {
       this.$element.dispatchEvent(new CustomEvent(event, { bubbles: true, detail: { component: this, payload } }));
     } else {

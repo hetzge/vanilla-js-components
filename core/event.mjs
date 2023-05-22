@@ -25,11 +25,11 @@ export class Event {
   }
   /**
    * @param {EventTarget} component
-   * @param {function(C, T):void} callback
+   * @param {function({target: C, payload: T}):void} callback
    */
   register(component, callback) {
     component.$element.addEventListener(this.key, (/** @type {CustomEvent} */ event) => {
-      callback(event.detail["component"], event.detail["payload"]);
+      callback({target: event.detail["component"], payload: event.detail["payload"]});
     });
   }
 }
