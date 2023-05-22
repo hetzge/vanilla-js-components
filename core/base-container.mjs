@@ -23,6 +23,9 @@ export class BaseContainer extends BaseComponent {
      * @type {HTMLElement}
      */
     this.$element = document.createElement(tag);
+    if(window["debug"] === true) {
+      this.$element.setAttribute("data-component", this.constructor.name);
+    }
   }
   /**
    * Clear the content of this container.
