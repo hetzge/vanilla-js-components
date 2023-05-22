@@ -23,10 +23,8 @@ export class Tabulators extends core.BaseComponent {
   constructor() {
     super();
     this.$element = (this._division = new core.Division()).$element;
-    this._division.content = [
-      this._list = new core.UnorderedList(),
-      this._body = new core.Division(),
-    ];
+    this.head = new core.UnorderedList();
+    this.body = new core.Division();
     /** @type {Object<string, import("../core/base-component.mjs").BaseComponent>} */
     this._items = {};
   }
@@ -34,7 +32,7 @@ export class Tabulators extends core.BaseComponent {
   set pages(pages) {
     this._pages = pages;
     this._items = {};
-    this._list.listContent = Object.keys(pages).map(key => {
+    this.head.listContent = Object.keys(pages).map(key => {
       const item = core.createListItem(pages[key].tabulator);
       item.$element.style.cursor = "pointer";
       item.onClick = () => this.open(key);
@@ -44,7 +42,7 @@ export class Tabulators extends core.BaseComponent {
   }
   async open(key) {
     this.active = key;
-    this._body.content = await this._pages[key].page();
+    this.body.content = await this._pages[key].page();
   }
   set active(key) {
     this._active = key;
