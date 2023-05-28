@@ -20,8 +20,7 @@ function setupContainer() {
 export class Modal extends BaseComponent {
   constructor() {
     super();
-    this.$element = document.createElement("span");
-    this._$dialog = document.createElement("dialog");
+    this.$element = this._$dialog = document.createElement("dialog");
     this._stackLayout = new layout.PancakeStackLayout();
     this._$dialog.append(this._stackLayout.$element);
   }
