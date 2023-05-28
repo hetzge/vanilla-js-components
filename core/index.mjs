@@ -21,3 +21,4 @@ export * from "./lazy.mjs";
 export * from "./page.mjs";
 export * from "./utils.mjs";
 export * from "./style.mjs";
+export * from "./svg.mjs";
