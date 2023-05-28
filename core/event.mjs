@@ -18,7 +18,7 @@ export class Event {
   }
   /**
    * @param {C} component 
-   * @param {T} payload 
+   * @param {T|null} payload 
    */
   dispatch(component, payload) {
     component.$element.dispatchEvent(new CustomEvent(this.key, { bubbles: true, detail: { component, payload } }));

@@ -111,9 +111,9 @@ export class BaseComponent {
    * @template T
    * @this C
    * @param {string|Event<C, T>} event The event key
-   * @param {T} payload
+   * @param {T|null} payload
    */
-  dispatchEvent(event, payload) {
+  dispatchEvent(event, payload = null) {
     if (typeof event === "string") {
       this.$element.dispatchEvent(new CustomEvent(event, { bubbles: true, detail: { component: this, payload } }));
     } else {
