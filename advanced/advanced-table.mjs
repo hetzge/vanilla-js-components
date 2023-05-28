@@ -20,7 +20,10 @@ class PageDropdown extends core.BaseComponent {
       { value: "200", text: "200" },
       { value: "1000", text: "1000" },
     ];
-    this.onEvent(core.Dropdown.SELECT_EVENT, () => this.dispatchEvent(PageDropdown.PAGE_SELECT_EVENT));
+    this.onEvent(
+      core.Dropdown.SELECT_EVENT,
+      () => this.dispatchEvent(PageDropdown.PAGE_SELECT_EVENT),
+    );
   }
   /** @type {number} */
   get pageSize() {
@@ -47,9 +50,12 @@ class TableHeaderToggle extends core.BaseComponent {
     this._toggle.states = [
       { value: null, content: [this._content, this._noSortSpan] },
       { value: "asc", content: [this._content, this._ascSortSpan] },
-      { value: "desc", content: [this._content, this._descSortSpan] }
+      { value: "desc", content: [this._content, this._descSortSpan] },
     ];
-    this.onEvent(core.Toggle.TOGGLE_EVENT, () => this.dispatchEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT));
+    this.onEvent(
+      core.Toggle.TOGGLE_EVENT,
+      () => this.dispatchEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT),
+    );
     this.$element.style.cursor = "pointer";
     this.$element.style.display = "flex";
   }
@@ -90,31 +96,30 @@ class TableHeaderToggle extends core.BaseComponent {
  * @property {function():core.Content} [unitFactory]
  * @property {function(Object):core.Content} cellFactory
  */
-{ }
+{}
 
 /**
  * @typedef {Object} LoadTableRequest
  * @property {object} sorts
  * @property {number} offset
  * @property {number} limit
- * @property {string} query
+ * @property {string|null} query
  */
-{ }
+{}
 
 /**
  * @typedef {Object} LoadTableResponse
  * @property {number} total
  * @property {Array<Object>} rows
  */
-{ }
+{}
 
 /**
  * @typedef {Object} AdvancedTableLoadEventDetails
  * @property {LoadTableRequest} request
  * @property {{resolve:function(LoadTableResponse):void,reject:function(*):void}} callback
  */
-{ }
-
+{}
 
 export class PaginationLayout extends core.BaseContainer {
   /** @type {core.Event<PaginationLayout, void>} */
@@ -136,7 +141,9 @@ export class PaginationLayout extends core.BaseContainer {
     this._searchInput = new core.TextInput();
     this._searchInput.placeholder = "Search";
     this._searchInput.onEvent("keyup", () => {
-      this._request.query = this._searchInput.value !== "" ? this._searchInput.value : null;
+      this._request.query = this._searchInput.value !== ""
+        ? this._searchInput.value
+        : null;
       this.load();
     });
     // ---------------------------------------------------
@@ -144,7 +151,6 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
     const header = new core.HeaderLayout();
     header.left.content = this._headerPagination;
-    header.left.$element.style.width = "400px";
     header.center.content = this._searchInput;
     header.right.content = this._headerPageDropdown;
     // ---------------------------------------------------
@@ -152,7 +158,6 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
     const footer = new core.HeaderLayout();
     footer.left.content = this._footerPagination;
-    footer.left.$element.style.width = "400px";
     footer.center.content = "";
     footer.right.content = this._footerPageDropdown;
     // ---------------------------------------------------
@@ -164,25 +169,26 @@ export class PaginationLayout extends core.BaseContainer {
     // ---------------------------------------------------
 
     this.content = this._layout = layout;
+    this.enableSearch = false;
 
     /** @type {LoadTableRequest} */
     this._request = {
       sorts: {},
       offset: 0,
       limit: 10,
-      query: null
+      query: null,
     };
 
-    this.onEvent(PageDropdown.PAGE_SELECT_EVENT, (dropdown) => {
-      this.pageSize = dropdown.pageSize;
+    this.onEvent(PageDropdown.PAGE_SELECT_EVENT, ({ target }) => {
+      this.pageSize = target.pageSize;
       this.load();
     });
-    this.onEvent(Pagination.SELECT_EVENT, (pagination) => {
-      this.page = pagination.page;
+    this.onEvent(Pagination.SELECT_EVENT, ({ target }) => {
+      this.page = target.page;
       this.load();
     });
-    this.onEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT, (toggle) => {
-      this._request.sorts[toggle.key] = toggle.order;
+    this.onEvent(TableHeaderToggle.TOGGLE_HEADER_EVENT, ({ target }) => {
+      this._request.sorts[target.key] = target.order;
       this.load();
     });
   }
@@ -196,7 +202,8 @@ export class PaginationLayout extends core.BaseContainer {
     this._headerPagination.pageSize = pageSize;
     this._footerPagination.pageSize = pageSize;
     this._request.limit = pageSize;
-    this._request.offset = (this._headerPagination.page - 1) * this._request.limit;
+    this._request.offset = (this._headerPagination.page - 1) *
+      this._request.limit;
   }
   /** @param {Number} page */
   set page(page) {
@@ -216,20 +223,25 @@ export class PaginationLayout extends core.BaseContainer {
   get body() {
     return this._layout.body;
   }
+  set enableSearch(enableSearch) {
+    this._searchInput.$element.style.visibility = enableSearch
+      ? "visible"
+      : "hidden";
+  }
 }
 
-const advancedTableCss = core.createCss(className => {
+const advancedTableCss = core.createCss((className) => {
   return `
     .${className} {
-	  position: relative;
-	  width: 100%;
-	}
-	.${className} > thead > tr > th {
-	  position: sticky;
-	  top: 0;
-	  background-color: white;
-	  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-	}
+      position: relative;
+      width: 100%;
+    }
+    .${className} > thead > tr > th {
+      position: sticky;
+      top: 0;
+      background-color: white;
+      box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    }
   `;
 });
 
@@ -242,11 +254,12 @@ export class SortableTable extends core.BaseComponent {
     this._sortContentFactory = {
       no: () => "",
       asc: () => "(ASC)",
-      desc: () => "DESC"
+      desc: () => "DESC",
     };
     this._columnListController = new core.ListController();
     this._columnListController.factory = this._columnFactory.bind(this);
-    this._columnListController.callback = (columns) => this._table.columns = columns;
+    this._columnListController.callback = (columns) =>
+      this._table.columns = columns;
   }
   _columnFactory(column) {
     return {
@@ -255,7 +268,7 @@ export class SortableTable extends core.BaseComponent {
         if (column.unitFactory !== undefined) {
           headerContainer.foot.content = column.unitFactory();
         } else {
-          headerContainer.foot.content = "-";
+          headerContainer.foot.content = "";
         }
         if (column.sortKey !== undefined) {
           const headerToggle = new TableHeaderToggle();
@@ -272,7 +285,7 @@ export class SortableTable extends core.BaseComponent {
         }
         return headerContainer;
       },
-      cellFactory: column.cellFactory
+      cellFactory: column.cellFactory,
     };
   }
   /** @param {Array<AdvancedTableColumn>} columns */
@@ -309,8 +322,3 @@ export class AdvancedTable extends PaginationLayout {
     this._table.rows = data.rows;
   }
 }
-
-
-
-
-

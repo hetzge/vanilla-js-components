@@ -34,14 +34,14 @@ class PaginationData {
   }
   get lowOptions() {
     const options = [];
-    for (let option = Math.max(1, this.page - 5); option < this.page; option++) {
+    for (let option = Math.max(1, this.page - 3); option < this.page; option++) {
       options.push(option);
     }
     return options;
   }
   get highOptions() {
     const options = [];
-    for (let option = this.page + 1; option <= Math.min(this.lastPage, this.page + 6); option++) {
+    for (let option = this.page + 1; option <= Math.min(this.lastPage, this.page + 3); option++) {
       options.push(option);
     }
     return options;
