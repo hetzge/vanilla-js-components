@@ -2,6 +2,7 @@
 
 import { BaseComponent } from "./base-component.mjs";
 import { BaseContainer } from "./base-container.mjs";
+import { createCss } from "./style.mjs";
 
 // Inspired by: https://1linelayouts.glitch.me
 
@@ -26,6 +27,21 @@ export class CenterLayout extends BaseComponent {
 }
 
 export class HeaderLayout extends BaseComponent {
+  static CSS = createCss(className => {
+    return `
+      .${className} {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .${className} > span {
+        flex-grow: 1;
+        flex-basis: 33%;
+      }
+    `;
+  });
   constructor() {
     super();
     this.$element = (this._container = new BaseContainer("div")).$element;
@@ -34,13 +50,10 @@ export class HeaderLayout extends BaseComponent {
       (this._center = new BaseContainer("span")),
       (this._right = new BaseContainer("span"))
     ];
-    this.applyStyle({
-      "width": "100%",
-      "height": "100%",
-      "display": "flex",
-      "justify-content": "space-between",
-      "align-items": "center"
-    });
+    this._left.$element.style.textAlign = "left";
+    this._center.$element.style.textAlign = "center";
+    this._right.$element.style.textAlign = "right";
+    this.className = HeaderLayout.CSS();
   }
   /**
    * @type {BaseContainer} 
