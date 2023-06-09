@@ -29,4 +29,13 @@ export class Svg extends BaseComponent {
   set href(href) {
     this._$use.setAttribute("href", href);
   }
+  static create(href, {width, height} = {width: "100%", height: "100%"}) {
+    const svg = new Svg();
+    svg.href = href;
+    svg.applyStyle({
+      "width": width,
+      "height": height,
+    });
+    return svg;
+  }
 }
