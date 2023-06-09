@@ -9,6 +9,16 @@ export class Division extends BaseContainer {
   }
 }
 
+export class Container extends Division {
+  constructor() {
+    super();
+    this.applyStyle({
+      "width": "100%",
+      "height": "100%",
+    });
+  }
+}
+
 export class Section extends BaseContainer {
   constructor() {
     super("section");
