@@ -24,7 +24,7 @@ export class Tabulators extends core.BaseComponent {
     super();
     this.$element = (this._division = new core.Division()).$element;
     this.head = new core.UnorderedList();
-    this.body = new core.Division();
+    this.body = new core.Container();
     /** @type {Object<string, import("../core/base-component.mjs").BaseComponent>} */
     this._items = {};
   }
