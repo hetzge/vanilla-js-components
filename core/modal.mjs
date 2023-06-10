@@ -22,6 +22,7 @@ export class Modal extends BaseComponent {
     super();
     this.$element = this._$dialog = document.createElement("dialog");
     this._stackLayout = new layout.PancakeStackLayout();
+    this._stackLayout.$element.style.height = "initial";
     this._$dialog.append(this._stackLayout.$element);
   }
   open() {

@@ -34,14 +34,20 @@ class PaginationData {
   }
   get lowOptions() {
     const options = [];
-    for (let option = Math.max(1, this.page - 3); option < this.page; option++) {
+    for (
+      let option = Math.max(1, this.page - 3); option < this.page; option++
+    ) {
       options.push(option);
     }
     return options;
   }
   get highOptions() {
     const options = [];
-    for (let option = this.page + 1; option <= Math.min(this.lastPage, this.page + 3); option++) {
+    for (
+      let option = this.page + 1;
+      option <= Math.min(this.lastPage, this.page + 3);
+      option++
+    ) {
       options.push(option);
     }
     return options;
@@ -52,7 +58,7 @@ class PaginationData {
  * @typedef {Object} PaginationSelectEventDetails
  * @property {number} page
  */
-{ }
+{}
 
 export class Pagination extends core.BaseContainer {
   /** @type {core.Event<Pagination, void>} */
@@ -86,21 +92,43 @@ export class Pagination extends core.BaseContainer {
   update() {
     this.$element.innerHTML = "";
     this.$element.append(this._createOption(1, "<<", this.page > 1));
-    this.$element.append(this._createOption(Math.max(1, this._data.page - 1), "<", this.page > 1));
+    this.$element.append(
+      this._createOption(Math.max(1, this._data.page - 1), "<", this.page > 1),
+    );
     for (let option of this._data.lowOptions) {
       this.$element.append(this._createOption(option, "" + option));
     }
-    this.$element.append(this._createOption(this._data.page, "" + this._data.page, false));
+    this.$element.append(
+      this._createOption(this._data.page, "" + this._data.page, false),
+    );
     for (let option of this._data.highOptions) {
       this.$element.append(this._createOption(option, "" + option));
     }
-    this.$element.append(this._createOption(Math.min(this._data.lastPage, this.page + 1), ">", this.page < this._data.lastPage));
-    this.$element.append(this._createOption(this._data.lastPage, ">>", this.page < this._data.lastPage));
+    this.$element.append(
+      this._createOption(
+        Math.min(this._data.lastPage, this.page + 1),
+        ">",
+        this.page < this._data.lastPage,
+      ),
+    );
+    this.$element.append(
+      this._createOption(
+        this._data.lastPage,
+        ">>",
+        this.page < this._data.lastPage,
+      ),
+    );
   }
   _createOption(page, label, enabled = true) {
-    const optionElement = document.createElement("button");
+    const optionElement = document.createElement("a");
+    optionElement.href = "#";
     optionElement.innerText = label;
-    optionElement.disabled = !enabled;
+    optionElement.style.padding = "4px";
+    if (enabled) {
+      optionElement.style.cursor = "pointer";
+    } else {
+      optionElement.style.color = "gray";
+    }
     optionElement.addEventListener("click", () => this._setPage(page));
     return optionElement;
   }
